@@ -830,7 +830,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9107991869879251105, guid: 737d43e906c8c3d4cb252f98bceca560, type: 3}
       propertyPath: jumpForce
-      value: 12
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107991869879251105, guid: 737d43e906c8c3d4cb252f98bceca560, type: 3}
+      propertyPath: moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107991869879251105, guid: 737d43e906c8c3d4cb252f98bceca560, type: 3}
+      propertyPath: maxholdJumpTime
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 9107991869879251105, guid: 737d43e906c8c3d4cb252f98bceca560, type: 3}
       propertyPath: groundCheckDistance

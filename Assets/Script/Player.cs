@@ -7,10 +7,14 @@ public class Player : MonoBehaviour
     public Rigidbody2D rb;
     [SerializeField] private Animator anim;
     public float moveSpeed;
-    public float jumpForce;
     [SerializeField] private int facingDir = 1;
     [SerializeField] private bool facingRight = true;
 
+    [Header("Jump Info")]
+    [SerializeField] private float jumpForce;
+    [SerializeField] private bool isHoldingJump = false;
+    [SerializeField] private float maxholdJumpTime = 0.4f;
+    [SerializeField] private float holdJumpTimer = 0.0f;
 
 
 
@@ -37,10 +41,32 @@ public class Player : MonoBehaviour
         CheckInput();
         CollisionCheck();
 
+        if (isGrounded)
+        {
+            holdJumpTimer = 0;
+        }
+
         AnimatorControllers();
 
         FlipController();
     }
+
+    private void FixedUpdate()
+    {
+        if (isHoldingJump && holdJumpTimer < maxholdJumpTime)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 9);
+            holdJumpTimer += Time.fixedDeltaTime;
+        }
+    }
+
+    private void Jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        isHoldingJump = true;
+        holdJumpTimer = 0f; 
+    }
+
 
     private void CollisionCheck()
     {
@@ -52,7 +78,11 @@ public class Player : MonoBehaviour
         xInput = Input.GetAxisRaw("Horizontal");
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            Jump();
+            Jump();     
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isHoldingJump = false;
         }
     }
 
@@ -61,10 +91,6 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(xInput, rb.velocity.y);
     }
 
-    private void Jump()
-    {
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-    }
 
     private void AnimatorControllers()
     {
