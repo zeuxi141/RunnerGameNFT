@@ -6,9 +6,16 @@ public class Player : MonoBehaviour
 {
     public Rigidbody2D rb;
     [SerializeField] private Animator anim;
-    public float moveSpeed;
     [SerializeField] private int facingDir = 1;
     [SerializeField] private bool facingRight = true;
+
+    [Header("Run speed info")]
+    [SerializeField] private float acceleration = 10f;
+    private float maxAcceleration = 10f;
+    [SerializeField] public float currentSpeed;
+    private float maxSpeed = 100;
+    public float moveSpeed;
+    [SerializeField] public float distance = 0;
 
     [Header("Jump Info")]
     [SerializeField] private float jumpForce;
@@ -58,6 +65,7 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, 9);
             holdJumpTimer += Time.fixedDeltaTime;
         }
+
     }
 
     private void Jump()
@@ -88,7 +96,26 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
-        rb.velocity = new Vector2(xInput, rb.velocity.y);
+        if (xInput != 0)
+        {
+            float speedRatio = currentSpeed / maxSpeed;
+            acceleration = maxAcceleration * ( 1- speedRatio );
+
+            currentSpeed += acceleration * Time.deltaTime; 
+            if(currentSpeed >= maxSpeed)
+            {
+                currentSpeed = maxSpeed;
+            
+            }
+            distance += currentSpeed * Time.fixedDeltaTime;
+        }
+        else
+        {
+            currentSpeed = moveSpeed; 
+        }
+
+
+        rb.velocity = new Vector2(xInput * currentSpeed, rb.velocity.y);
     }
 
 
