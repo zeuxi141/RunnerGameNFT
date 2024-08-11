@@ -7,11 +7,13 @@ public class parallax : MonoBehaviour
     public float depth = 1;
 
     Player player;
+    //PlayerScript player;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         player = GameObject.Find("Player").GetComponent<Player>();
+        //player = GameObject.Find("Player").GetComponent<PlayerScript>();
+
     }
 
     // Update is called once per frame
@@ -22,14 +24,15 @@ public class parallax : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float realVelocity = player.currentSpeed/depth;
+        float realVelocity = player.currentSpeed / depth;
+        //float realVelocity = player.velocity.x / depth;
         Vector2 pos = transform.position;
 
         pos.x -= realVelocity * Time.fixedDeltaTime;
 
         if(pos.x <= -20)
         {
-            pos.x = 20;
+            pos.x = 18;
         } 
 
         transform.position = pos;

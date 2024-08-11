@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
 
 
 
-    private float xInput;
+    private float xInput = 0.1f;
     private bool isGrounded;
 
     [Header("Collision Info")]
@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
 
     private void CheckInput()
     {
-        xInput = Input.GetAxisRaw("Horizontal");
+        //xInput = Input.GetAxisRaw("Horizontal");
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             Jump();     
@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
             float speedRatio = currentSpeed / maxSpeed;
             acceleration = maxAcceleration * ( 1- speedRatio );
 
-            currentSpeed += acceleration * Time.deltaTime; 
+            currentSpeed += acceleration * Time.fixedDeltaTime; 
             if(currentSpeed >= maxSpeed)
             {
                 currentSpeed = maxSpeed;
@@ -115,13 +115,14 @@ public class Player : MonoBehaviour
         }
 
 
-        rb.velocity = new Vector2(xInput * currentSpeed, rb.velocity.y);
+        //rb.velocity = new Vector2(xInput * currentSpeed, rb.velocity.y);
     }
 
 
     private void AnimatorControllers()
     {
-        bool isMoving = rb.velocity.x != 0;
+        //bool isMoving = rb.velocity.x != 0;
+        bool isMoving = true;
 
         anim.SetFloat("yVelocity", rb.velocity.y);
         anim.SetBool("isMoving", isMoving);
