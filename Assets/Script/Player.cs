@@ -18,9 +18,9 @@ public class Player : MonoBehaviour
     [SerializeField] public float distance = 0;
 
     [Header("Jump Info")]
-    [SerializeField] private float jumpForce;
+    [SerializeField] public float jumpForce;
     [SerializeField] private bool isHoldingJump = false;
-    [SerializeField] private float maxholdJumpTime = 0.4f;
+    [SerializeField] public float maxholdJumpTime = 0.4f;
     [SerializeField] private float holdJumpTimer = 0.0f;
 
 
