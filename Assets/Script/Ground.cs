@@ -5,10 +5,12 @@ using UnityEngine;
 public class Ground : MonoBehaviour
 {
     Player player;
+    public GameObject gemPrefab;
 
     public float depth = 8;
     public float groundHeight;
     public float groundRight;
+    public float groundLeft;
     public float screenRight;
     public float screenLeft;
     BoxCollider2D collider;
@@ -39,10 +41,12 @@ public class Ground : MonoBehaviour
     {
         Vector2 pos = transform.position;
 
-        float realVelocity = player.currentSpeed / depth;
-        pos.x -= realVelocity * Time.fixedDeltaTime;
+        // move ground to left
+        pos = GroundMovement(pos);
 
+        groundHeight = transform.position.y + (collider.size.y * transform.localScale.y / 2);
         groundRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
+        groundLeft = transform.position.x - (collider.size.x * transform.localScale.x / 2);
 
         if (groundRight < screenLeft)
         {
@@ -62,6 +66,13 @@ public class Ground : MonoBehaviour
         transform.position = pos;
     }
 
+    private Vector2 GroundMovement(Vector2 pos)
+    {
+        float realVelocity = player.currentSpeed / depth;
+        pos.x -= realVelocity * Time.fixedDeltaTime;
+        return pos;
+    }
+
     void generateGround()
     {
         GameObject go = Instantiate(gameObject);
@@ -72,22 +83,37 @@ public class Ground : MonoBehaviour
         goGround.groundHeight = go.transform.position.y + (goCollider.size.y * transform.localScale.y / 2);
 
         float gravity = Mathf.Abs(Physics2D.gravity.y * player.rb.gravityScale);
-        float maxY = (player.jumpForce * player.jumpForce) / (2 * gravity);
-        Debug.Log("Max Jump height: " + maxY);
+        float maxY = (player.jumpForce * player.jumpForce) / (1.3f * gravity);
         float minY = goGround.groundHeight - 10;
 
         float lowestCameraView = Camera.main.transform.position.y - Camera.main.orthographicSize;
-        Debug.Log("LowestCamera: " + lowestCameraView);
+    
         if (minY < lowestCameraView)
         {
             minY = lowestCameraView;
         }
-        Debug.Log("Min Jump height: " + minY);
+        
         float actualY = Random.Range(minY, maxY) - goCollider.size.y / 2;
 
         pos.x = screenRight + Random.Range(10, 15);
         pos.y = actualY;
         go.transform.position = pos;
 
+        if (gemPrefab != null)
+        {
+            GameObject gem = Instantiate(gemPrefab);
+            gem.transform.position = go.transform.position;
+            Debug.Log("Max Y" + maxY);
+            Vector2 gemPosition = transform.position;
+            gemPosition.x = Random.Range(groundLeft, groundRight);
+            gemPosition.y = (groundHeight + Random.Range(1, maxY));
+            gem.transform.position = gemPosition;
+
+            Rigidbody2D gemRb = gem.GetComponent<Rigidbody2D>();
+            if (gemRb != null)
+            {
+                gemRb.gravityScale = 0;
+            }
+        }
     }
 }
