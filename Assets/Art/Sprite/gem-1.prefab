@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6762136955953935649}
   - component: {fileID: 8998384511294967514}
   - component: {fileID: 1562480874314169388}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: gem-1
   m_TagString: Gem
   m_Icon: {fileID: 0}
@@ -75,9 +75,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -35357541
+  m_SortingLayer: 2
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: bd59bf2e866ed4529ae645637eb9c11d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -240,5 +240,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   depth: 8
+  gemRight: 0
   screenRight: 0
   screenLeft: 0
