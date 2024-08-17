@@ -79,11 +79,13 @@ public class Ground : MonoBehaviour
         BoxCollider2D goCollider = go.GetComponent<BoxCollider2D>();
         Vector2 pos;
 
+        // caculate ground height
         Ground goGround = go.GetComponent<Ground>();
         goGround.groundHeight = go.transform.position.y + (goCollider.size.y * transform.localScale.y / 2);
 
+        // caculate min max
         float gravity = Mathf.Abs(Physics2D.gravity.y * player.rb.gravityScale);
-        float maxY = (player.jumpForce * player.jumpForce) / (1.3f * gravity);
+        float maxY = (player.jumpForce * player.jumpForce) / (2 * gravity);
         float minY = goGround.groundHeight - 10;
 
         float lowestCameraView = Camera.main.transform.position.y - Camera.main.orthographicSize;
@@ -93,12 +95,13 @@ public class Ground : MonoBehaviour
             minY = lowestCameraView;
         }
         
-        float actualY = Random.Range(minY, maxY) - goCollider.size.y / 2;
+        float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2;
 
         pos.x = screenRight + Random.Range(10, 15);
         pos.y = actualY;
         go.transform.position = pos;
 
+        // generate gem
         if (gemPrefab != null)
         {
             GameObject gem = Instantiate(gemPrefab);
