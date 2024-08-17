@@ -35,29 +35,32 @@ public class Gem : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 pos = transform.position;
-
-        gemRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
-
-        // move gem
-        pos = GemMovement(pos);
-
-        if (gemRight < screenLeft)
+        if(player.isStart)
         {
-            Destroy(gameObject);
-            return;
+            Vector2 pos = transform.position;
+
+            gemRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
+
+            // move gem
+            pos = GemMovement(pos);
+
+            if (gemRight < screenLeft)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            //if (!didGenerateGround)
+            //{
+            //    if (groundRight < screenRight)
+            //    {
+            //        didGenerateGround = true;
+            //        generateGround();
+            //    }
+            //}
+
+            transform.position = pos;
         }
-
-        //if (!didGenerateGround)
-        //{
-        //    if (groundRight < screenRight)
-        //    {
-        //        didGenerateGround = true;
-        //        generateGround();
-        //    }
-        //}
-
-        transform.position = pos;
     }
 
     private Vector2 GemMovement(Vector2 pos)

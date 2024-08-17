@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     [SerializeField] public float maxholdJumpTime = 0.4f;
     [SerializeField] private float holdJumpTimer = 0.0f;
 
+    [Header("Gameplay Info")]
+    public bool isStart = false;
+
 
 
     private float xInput = 0.1f;
@@ -43,19 +46,28 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
-
-        CheckInput();
-        CollisionCheck();
-
-        if (isGrounded)
+        if (isStart)
         {
-            holdJumpTimer = 0;
+
+            Movement();
+
+            CheckInput();
+            CollisionCheck();
+
+            if (isGrounded)
+            {
+                holdJumpTimer = 0;
+            }
+
+            AnimatorControllers();
+
+            FlipController();
         }
-
-        AnimatorControllers();
-
-        FlipController();
+        else
+        {
+            anim.SetBool("isMoving", false);
+            anim.SetBool("isGrounded", true);
+        }
     }
 
     private void FixedUpdate()

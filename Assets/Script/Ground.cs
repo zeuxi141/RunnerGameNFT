@@ -6,6 +6,8 @@ public class Ground : MonoBehaviour
 {
     Player player;
     public GameObject gemPrefab;
+    public GameObject[] groundPrefabs;
+
 
     public float depth = 8;
     public float groundHeight;
@@ -39,31 +41,35 @@ public class Ground : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 pos = transform.position;
-
-        // move ground to left
-        pos = GroundMovement(pos);
-
-        groundHeight = transform.position.y + (collider.size.y * transform.localScale.y / 2);
-        groundRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
-        groundLeft = transform.position.x - (collider.size.x * transform.localScale.x / 2);
-
-        if (groundRight < screenLeft)
+        if (player.isStart)
         {
-            Destroy(gameObject);
-            return;
-        }
 
-        if (!didGenerateGround)
-        {
-            if (groundRight < screenRight)
+            Vector2 pos = transform.position;
+
+            // move ground to left
+            pos = GroundMovement(pos);
+
+            groundHeight = transform.position.y + (collider.size.y * transform.localScale.y / 2);
+            groundRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
+            groundLeft = transform.position.x - (collider.size.x * transform.localScale.x / 2);
+
+            if (groundRight < screenLeft)
             {
-                didGenerateGround = true;
-                generateGround();
+                Destroy(gameObject);
+                return;
             }
-        }
 
-        transform.position = pos;
+            if (!didGenerateGround)
+            {
+                if (groundRight < screenRight)
+                {
+                    didGenerateGround = true;
+                    generateGround();
+                }
+            }
+
+            transform.position = pos;
+        }
     }
 
     private Vector2 GroundMovement(Vector2 pos)
@@ -76,8 +82,15 @@ public class Ground : MonoBehaviour
     void generateGround()
     {
         GameObject go = Instantiate(gameObject);
-        BoxCollider2D goCollider = go.GetComponent<BoxCollider2D>();
         Vector2 pos;
+        BoxCollider2D goCollider;
+
+        // Randomize the sprite of the generated ground
+        int randomIndex = Random.Range(0, groundPrefabs.Length);
+
+        CopyAtributesGameObj(go, randomIndex);
+        goCollider = go.GetComponent<BoxCollider2D>();
+
 
         // caculate ground height
         Ground goGround = go.GetComponent<Ground>();
@@ -89,15 +102,15 @@ public class Ground : MonoBehaviour
         float minY = goGround.groundHeight - 10;
 
         float lowestCameraView = Camera.main.transform.position.y - Camera.main.orthographicSize;
-    
+
         if (minY < lowestCameraView)
         {
             minY = lowestCameraView;
         }
-        
-        float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2;
 
-        pos.x = screenRight + Random.Range(10, 15);
+        float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2 + 0.5f;
+
+        pos.x = screenRight + Random.Range(10, 14);
         pos.y = actualY;
         go.transform.position = pos;
 
@@ -106,7 +119,6 @@ public class Ground : MonoBehaviour
         {
             GameObject gem = Instantiate(gemPrefab);
             gem.transform.position = go.transform.position;
-            Debug.Log("Max Y" + maxY);
             Vector2 gemPosition = transform.position;
             gemPosition.x = Random.Range(groundLeft, groundRight);
             gemPosition.y = (groundHeight + Random.Range(1, maxY));
@@ -118,5 +130,14 @@ public class Ground : MonoBehaviour
                 gemRb.gravityScale = 0;
             }
         }
+    }
+
+    private void CopyAtributesGameObj(GameObject go, int randomIndex)
+    {
+        go.GetComponent<SpriteRenderer>().sprite = groundPrefabs[randomIndex].GetComponent<SpriteRenderer>().sprite;
+        go.GetComponent<SpriteRenderer>().color = groundPrefabs[randomIndex].GetComponent<SpriteRenderer>().color;
+        go.transform.localScale = groundPrefabs[randomIndex].transform.localScale;
+        go.GetComponent<BoxCollider2D>().size = groundPrefabs[randomIndex].GetComponent<BoxCollider2D>().size;
+        go.GetComponent<BoxCollider2D>().offset = groundPrefabs[randomIndex].GetComponent<BoxCollider2D>().offset;
     }
 }
