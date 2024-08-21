@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Gem
   layers:
   - Default
   - TransparentFX
@@ -12,8 +13,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - Gem
+  - DeadthArea
   - 
   - 
   - 
@@ -49,4 +50,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3776397267
+    locked: 0
+  - name: DeadthArea
+    uniqueID: 1422226723
     locked: 0

@@ -18,10 +18,14 @@ public class Player : MonoBehaviour
     [SerializeField] public float distance = 0;
 
     [Header("Jump Info")]
-    [SerializeField] private float jumpForce;
+    [SerializeField] public float jumpForce;
     [SerializeField] private bool isHoldingJump = false;
-    [SerializeField] private float maxholdJumpTime = 0.4f;
+    [SerializeField] public float maxholdJumpTime = 0.4f;
     [SerializeField] private float holdJumpTimer = 0.0f;
+
+    [Header("Gameplay Info")]
+    public bool isStart = false;
+    public bool isDead = false;
 
 
 
@@ -31,6 +35,8 @@ public class Player : MonoBehaviour
     [Header("Collision Info")]
     [SerializeField] private float groundCheckDistance;
     [SerializeField] LayerMask whatIsGround;
+
+    [SerializeField] LayerMask deadthArea;
 
 
     // Start is called before the first frame update
@@ -43,19 +49,24 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
-
-        CheckInput();
-        CollisionCheck();
-
-        if (isGrounded)
+        if (isStart && isDead == false)
         {
-            holdJumpTimer = 0;
+
+            Movement();
+
+            CheckInput();
+
+            CollisionCheck();
+
+            AnimatorControllers();
+
+            FlipController();
         }
-
-        AnimatorControllers();
-
-        FlipController();
+        else
+        {
+            anim.SetBool("isMoving", false);
+            anim.SetBool("isGrounded", true);
+        }
     }
 
     private void FixedUpdate()
@@ -79,6 +90,7 @@ public class Player : MonoBehaviour
     private void CollisionCheck()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+        isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
     }
 
     private void CheckInput()
@@ -96,6 +108,10 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
+        if (isGrounded)
+        {
+            holdJumpTimer = 0;
+        }
         if (xInput != 0)
         {
             float speedRatio = currentSpeed / maxSpeed;
