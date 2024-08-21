@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
 
     [Header("Gameplay Info")]
     public bool isStart = false;
+    public bool isDead = false;
 
 
 
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
     [Header("Collision Info")]
     [SerializeField] private float groundCheckDistance;
     [SerializeField] LayerMask whatIsGround;
+
+    [SerializeField] LayerMask deadthArea;
 
 
     // Start is called before the first frame update
@@ -46,18 +49,14 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isStart)
+        if (isStart && isDead == false)
         {
 
             Movement();
 
             CheckInput();
-            CollisionCheck();
 
-            if (isGrounded)
-            {
-                holdJumpTimer = 0;
-            }
+            CollisionCheck();
 
             AnimatorControllers();
 
@@ -91,6 +90,7 @@ public class Player : MonoBehaviour
     private void CollisionCheck()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+        isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
     }
 
     private void CheckInput()
@@ -108,6 +108,10 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
+        if (isGrounded)
+        {
+            holdJumpTimer = 0;
+        }
         if (xInput != 0)
         {
             float speedRatio = currentSpeed / maxSpeed;

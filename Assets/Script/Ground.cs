@@ -41,7 +41,7 @@ public class Ground : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (player.isStart)
+        if (player.isStart && player.isDead == false)
         {
 
             Vector2 pos = transform.position;
