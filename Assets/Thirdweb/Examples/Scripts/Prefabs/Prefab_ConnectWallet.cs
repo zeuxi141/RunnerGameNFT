@@ -65,11 +65,29 @@ namespace Thirdweb.Examples
         private string _address;
         private string _password;
         private ChainData _currentChainData;
+        private static string savedAddress = null;
+
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
 
         private void Start()
         {
-            _address = null;
-            _password = null;
+            //_address = null;
+            //_password = null;
+            if (!string.IsNullOrEmpty(savedAddress))
+            {
+                _address = savedAddress;
+                PostConnect(); // Restore the connection
+            }
+            else
+            {
+                _address = null;
+                _password = null;
+            }
 
             _currentChainData = ThirdwebManager.Instance.supportedChains.Find(x => x.identifier == ThirdwebManager.Instance.activeChain);
 
@@ -204,6 +222,7 @@ namespace Thirdweb.Examples
         private async void PostConnect(WalletConnection wc = null)
         {
             ThirdwebDebug.Log($"Connected to {_address}");
+            savedAddress = _address; // Save the address
 
             var addy = _address.ShortenAddress();
             foreach (var addressText in addressTexts)
@@ -226,6 +245,7 @@ namespace Thirdweb.Examples
 
             onConnected.Invoke(_address);
         }
+
 
         // Network switching
 
