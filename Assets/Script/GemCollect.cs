@@ -11,6 +11,7 @@ public class GemCollect : MonoBehaviour
     public GameObject claimPrompt;
 
     [SerializeField] private TMPro.TextMeshProUGUI gemScoreText;
+    public AudioSource gemCollectSound;
 
 
     private void Start()
@@ -23,6 +24,7 @@ public class GemCollect : MonoBehaviour
         if (collision.gameObject.CompareTag("Gem"))
         {
             Destroy(collision.gameObject);
+            gemCollectSound.Play();
             gems++;
             Debug.Log("Gems count: "+gems);
             gemScoreText.text = gems.ToString();

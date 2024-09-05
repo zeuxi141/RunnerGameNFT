@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
 
 
     private float xInput = 0.1f;
-    private bool isGrounded;
+    public bool isGrounded;
 
     [Header("Collision Info")]
     [SerializeField] private float groundCheckDistance;
@@ -65,6 +65,7 @@ public class Player : MonoBehaviour
         else
         {
             anim.SetBool("isMoving", false);
+            isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
             anim.SetBool("isGrounded", true);
         }
     }
@@ -91,7 +92,7 @@ public class Player : MonoBehaviour
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
         //disable below code for test ground
-        //isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
+        isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
     }
 
     private void CheckInput()

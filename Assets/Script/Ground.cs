@@ -83,10 +83,8 @@ public class Ground : MonoBehaviour
         // Instantiate a new ground
         GameObject go = Instantiate(gameObject);
 
-        // Khai báo đối tượng chứa vị trí cho ground mới tạo
         Vector2 pos;
 
-        // Tạo viên ngọc (gem) trước khi cập nhật vị trí ground để chúng xuất hiện cùng lúc
         GameObject gem = null;
         if (gemPrefab != null)
         {
@@ -112,7 +110,7 @@ public class Ground : MonoBehaviour
             minY = lowestCameraView;
         }
 
-        float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2 + 0.5f;
+        float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2;
 
         if(player.currentSpeed <= 80)
         {
