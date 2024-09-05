@@ -10,10 +10,10 @@ public class Player : MonoBehaviour
     [SerializeField] private bool facingRight = true;
 
     [Header("Run speed info")]
-    [SerializeField] private float acceleration = 10f;
-    private float maxAcceleration = 10f;
+    [SerializeField] private float acceleration;
+    private float maxAcceleration = 5f;
     [SerializeField] public float currentSpeed;
-    private float maxSpeed = 100;
+    private float maxSpeed = 100f;
     public float moveSpeed;
     [SerializeField] public float distance = 0;
 
@@ -90,7 +90,8 @@ public class Player : MonoBehaviour
     private void CollisionCheck()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
-        isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
+        //disable below code for test ground
+        //isDead = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, deadthArea);
     }
 
     private void CheckInput()
@@ -117,13 +118,11 @@ public class Player : MonoBehaviour
             float speedRatio = currentSpeed / maxSpeed;
             acceleration = maxAcceleration * ( 1- speedRatio );
 
-            currentSpeed += acceleration * Time.fixedDeltaTime; 
-            if(currentSpeed >= maxSpeed)
-            {
-                currentSpeed = maxSpeed;
-            
-            }
-            distance += currentSpeed * Time.fixedDeltaTime;
+            currentSpeed += acceleration * Time.fixedDeltaTime;
+            //toc do khong vuot qua maxSpeed
+            currentSpeed = Mathf.Clamp(currentSpeed, 0, maxSpeed);
+            //calculate distance player runned
+            distance += currentSpeed/2 * Time.fixedDeltaTime;
         }
         else
         {

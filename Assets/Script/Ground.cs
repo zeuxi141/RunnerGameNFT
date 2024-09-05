@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class Ground : MonoBehaviour
     public float groundLeft;
     public float screenRight;
     public float screenLeft;
-    BoxCollider2D collider;
+    new BoxCollider2D collider;
 
     bool didGenerateGround = false;
 
@@ -49,7 +49,9 @@ public class Ground : MonoBehaviour
             // move ground to left
             pos = GroundMovement(pos);
 
+            //lay vi tri cao nhat cua ground
             groundHeight = transform.position.y + (collider.size.y * transform.localScale.y / 2);
+            //lay vi tri ben phải và trái của ground
             groundRight = transform.position.x + (collider.size.x * transform.localScale.x / 2);
             groundLeft = transform.position.x - (collider.size.x * transform.localScale.x / 2);
 
@@ -59,13 +61,10 @@ public class Ground : MonoBehaviour
                 return;
             }
 
-            if (!didGenerateGround)
-            {
-                if (groundRight < screenRight)
-                {
-                    didGenerateGround = true;
-                    generateGround();
-                }
+            if (!didGenerateGround && groundRight < screenRight)
+            {                               
+                didGenerateGround = true;
+                generateGround();             
             }
 
             transform.position = pos;
@@ -81,28 +80,33 @@ public class Ground : MonoBehaviour
 
     void generateGround()
     {
+        // Instantiate a new ground
         GameObject go = Instantiate(gameObject);
+
+        // Khai báo đối tượng chứa vị trí cho ground mới tạo
         Vector2 pos;
-        BoxCollider2D goCollider;
+
+        // Tạo viên ngọc (gem) trước khi cập nhật vị trí ground để chúng xuất hiện cùng lúc
+        GameObject gem = null;
+        if (gemPrefab != null)
+        {
+            gem = Instantiate(gemPrefab);
+        }
 
         // Randomize the sprite of the generated ground
         int randomIndex = Random.Range(0, groundPrefabs.Length);
 
+        // Copy the attributes of the ground prefab to the generated ground
         CopyAtributesGameObj(go, randomIndex);
-        goCollider = go.GetComponent<BoxCollider2D>();
+        BoxCollider2D goCollider = go.GetComponent<BoxCollider2D>();
 
-
-        // caculate ground height
-        Ground goGround = go.GetComponent<Ground>();
-        goGround.groundHeight = go.transform.position.y + (goCollider.size.y * transform.localScale.y / 2);
-
-        // caculate min max
+        // Tính toán vị trí khởi tạo nền
         float gravity = Mathf.Abs(Physics2D.gravity.y * player.rb.gravityScale);
+        float cameraBottom = Camera.main.transform.position.y - Camera.main.orthographicSize;
+        float minY = cameraBottom + goCollider.size.y * transform.localScale.y / 2 + 0.5f;
         float maxY = (player.jumpForce * player.jumpForce) / (2 * gravity);
-        float minY = goGround.groundHeight - 10;
-
-        float lowestCameraView = Camera.main.transform.position.y - Camera.main.orthographicSize;
-
+        float padding = 2.0f;
+        float lowestCameraView = Camera.main.transform.position.y - Camera.main.orthographicSize + padding;
         if (minY < lowestCameraView)
         {
             minY = lowestCameraView;
@@ -110,29 +114,43 @@ public class Ground : MonoBehaviour
 
         float actualY = Random.Range(minY, maxY) - goCollider.size.y * transform.localScale.y / 2 + 0.5f;
 
-        pos.x = screenRight + Random.Range(10, 14);
+        if(player.currentSpeed <= 80)
+        {
+            if(randomIndex == 2)
+            {
+                pos.x = screenRight + Random.Range(5, 6);
+            }
+            else
+            {
+                pos.x = screenRight + Random.Range(10, 12);
+            }
+        }
+        else
+        {
+            pos.x = screenRight + Random.Range(10, 14);
+        }
+        // Đặt vị trí của ground và gem ngay lập tức trước khi nó hiển thị trên camera
         pos.y = actualY;
         go.transform.position = pos;
 
-        // generate gem
-        if (gemPrefab != null)
+        // Đặt vị trí của gem dựa trên vị trí của ground ngay sau khi ground được khởi tạo
+        if (gem != null)
         {
-            GameObject gem = Instantiate(gemPrefab);
-            gem.transform.position = go.transform.position;
-            Vector2 gemPosition = transform.position;
-            gemPosition.x = Random.Range(groundLeft, groundRight);
-            gemPosition.y = (groundHeight + Random.Range(1, maxY));
+            Vector2 gemPosition = go.transform.position;
+            gemPosition.x = Random.Range(groundLeft + 0.2f, groundRight - 0.2f ); // Điều chỉnh tọa độ X của viên ngọc
+            gemPosition.y = go.transform.position.y + (goCollider.size.y * go.transform.localScale.y / 2) + 0.5f; // Đặt vị trí y của gem lên trên ground
             gem.transform.position = gemPosition;
 
             Rigidbody2D gemRb = gem.GetComponent<Rigidbody2D>();
             if (gemRb != null)
             {
-                gemRb.gravityScale = 0;
+                gemRb.gravityScale = 0; // Đặt trọng lực của gem bằng 0 để ngăn nó rơi xuống
             }
         }
     }
 
-    private void CopyAtributesGameObj(GameObject go, int randomIndex)
+
+private void CopyAtributesGameObj(GameObject go, int randomIndex)
     {
         go.GetComponent<SpriteRenderer>().sprite = groundPrefabs[randomIndex].GetComponent<SpriteRenderer>().sprite;
         go.GetComponent<SpriteRenderer>().color = groundPrefabs[randomIndex].GetComponent<SpriteRenderer>().color;
