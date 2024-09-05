@@ -37,19 +37,21 @@ public class TokenScript : MonoBehaviour
 
     }
 
+    //Get token balance
     public async void GetTokenBalance()
     {
-        try
-        {
+        //try
+        //{
             Address = await ThirdwebManager.Instance.SDK.Wallet.GetAddress();
-            Contract contract = ThirdwebManager.Instance.SDK.GetContract(DROP_ERC20_CONTRACT);
-            var data = await contract.ERC20.BalanceOf(Address);
-            tokenBalanceText.text = "$GEM: " + data.displayValue;
-        }
-        catch (System.Exception)
-        {
-            Debug.Log("Error getting token balance");
-        }
+            var contract = ThirdwebManager.Instance.SDK.GetContract(DROP_ERC20_CONTRACT);
+            var balance = await contract.ERC20.BalanceOf(Address);
+            tokenBalanceText.text = "$GEM: " + balance.displayValue;
+            Debug.Log("Token balance: " + balance.displayValue);
+        //}
+        //catch (System.Exception)
+        //{
+        //    Debug.Log("Error getting token balance");
+        //}
     }
 
     //Reset balance when disconnect wallet
@@ -96,6 +98,7 @@ public class TokenScript : MonoBehaviour
 
             ClaimingState.SetActive(false);
             ClaimedState.SetActive(true);
+            GetTokenBalance();
         }
         catch (System.Exception ex)
         {
